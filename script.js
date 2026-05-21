@@ -75,13 +75,27 @@ function triggerScan() {
 }
 
 // ── 차트 인스턴스 안전 생성 헬퍼 (중복 생성 방지) ──
+const _activeCharts = {};
+
 function safeCreateChart(canvasId, config) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return null;
-  // 이미 존재하는 인스턴스를 완전히 destroy 후 재생성
+  
+  // 1) 내가 관리하는 인스턴스 삭제
+  if (_activeCharts[canvasId]) {
+    _activeCharts[canvasId].destroy();
+    delete _activeCharts[canvasId];
+  }
+  
+  // 2) Chart.js 자체 인스턴스 삭제 (혹시 남아있을 경우)
   const existing = Chart.getChart(canvas);
-  if (existing) existing.destroy();
-  return new Chart(canvas.getContext('2d'), config);
+  if (existing) {
+    existing.destroy();
+  }
+  
+  const chart = new Chart(canvas.getContext('2d'), config);
+  _activeCharts[canvasId] = chart;
+  return chart;
 }
 
 // ── 대시보드 미니 바 차트 ──

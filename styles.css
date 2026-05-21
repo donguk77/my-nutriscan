@@ -132,6 +132,9 @@ body {
 .prog-fill.protein { background: var(--protein-color); }
 .prog-fill.fat { background: var(--fat-color); }
 
+/* --- CHART WRAPPER (Fix Infinite Growth) --- */
+.chart-container { position: relative; width: 100%; }
+
 /* ===========================
    PAGE 1: ONBOARDING
    =========================== */
