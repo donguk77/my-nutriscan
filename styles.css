@@ -273,6 +273,7 @@ body {
    PAGE 6: SCANNER
    =========================== */
 .scanner-page { background: #0A0A0A; min-height: calc(100vh - 64px); }
+.scanner-page.active { display: block; }
 .scanner-topbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; }
 .scanner-close { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .scanner-title { color: #fff; font-size: 16px; font-weight: 600; }
@@ -300,7 +301,8 @@ body {
 /* ===========================
    PAGE 7: LOADING
    =========================== */
-.loading-page { min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; background: #F8FAFF; }
+.loading-page { min-height: calc(100vh - 64px); align-items: center; justify-content: center; background: #F8FAFF; }
+.loading-page.active { display: flex; }
 .loading-wrap { text-align: center; padding: 48px 24px; }
 .loading-icon-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 32px; }
 .spinner-ring { position: absolute; inset: 0; border: 5px solid #E2E8F0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; }
