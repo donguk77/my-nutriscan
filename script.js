@@ -28,13 +28,12 @@ function showPage(id) {
     });
   }
 
-  // 4. 통계 페이지 진입 시 차트 초기화
-  if (id === 'stats' && !chartsReady) {
-    setTimeout(initCharts, 100); // DOM 렌더 후 실행
-    chartsReady = true;
+  // 5. 통계 페이지 진입 시 차트 초기화 (매번 재생성 — safeCreateChart가 내부에서 destroy 처리)
+  if (id === 'stats') {
+    setTimeout(initCharts, 100);
   }
 
-  // 5. 대시보드 진입 시 미니 차트 초기화
+  // 6. 대시보드 진입 시 미니 차트 초기화 (매번 재생성)
   if (id === 'dashboard') {
     setTimeout(initMiniChart, 100);
   }
@@ -75,23 +74,29 @@ function triggerScan() {
   }, 2600);
 }
 
-// ── 대시보드 미니 라인 차트 ──
-function initMiniChart() {
-  const canvas = document.getElementById('miniWeekChart');
-  if (!canvas || canvas._chartInstance) return;
+// ── 차트 인스턴스 안전 생성 헬퍼 (중복 생성 방지) ──
+function safeCreateChart(canvasId, config) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+  // 이미 존재하는 인스턴스를 완전히 destroy 후 재생성
+  const existing = Chart.getChart(canvas);
+  if (existing) existing.destroy();
+  return new Chart(canvas.getContext('2d'), config);
+}
 
-  const ctx = canvas.getContext('2d');
-  const chart = new Chart(ctx, {
+// ── 대시보드 미니 바 차트 ──
+function initMiniChart() {
+  const data = [1850, 1920, 2050, 2350, 1980, 1860, 1120];
+  safeCreateChart('miniWeekChart', {
     type: 'bar',
     data: {
       labels: ['월', '화', '수', '목', '금', '토', '일(오늘)'],
       datasets: [{
         label: 'kcal',
-        data: [1850, 1920, 2050, 2350, 1980, 1860, 1120],
-        backgroundColor: ctx => {
-          const v = [1850,1920,2050,2350,1980,1860,1120][ctx.dataIndex];
-          return v > 2000 ? '#FCA5A5' : ctx.dataIndex === 6 ? '#BAD8FD' : '#4299E1';
-        },
+        data,
+        backgroundColor: data.map((v, i) =>
+          v > 2000 ? '#FCA5A5' : i === 6 ? '#BAD8FD' : '#4299E1'
+        ),
         borderRadius: 6, borderSkipped: false,
       }]
     },
@@ -104,107 +109,93 @@ function initMiniChart() {
       }
     }
   });
-  canvas._chartInstance = chart;
 }
 
 // ── 통계 차트 ──
 function initCharts() {
-
   // 1) 주간 칼로리 바 차트
-  const barCanvas = document.getElementById('weeklyBar');
-  if (barCanvas && !barCanvas._chartInstance) {
-    barCanvas._chartInstance = new Chart(barCanvas.getContext('2d'), {
-      type: 'bar',
-      data: {
-        labels: ['월', '화', '수', '목', '금', '토', '일'],
-        datasets: [
-          {
-            label: '섭취 칼로리',
-            data: [1850, 1920, 2050, 2350, 1980, 1860, 1120],
-            backgroundColor: d => d.raw > 2000 ? '#FCA5A5' : '#4299E1',
-            borderRadius: 6, borderSkipped: false,
-          },
-          {
-            label: '목표',
-            data: [2000,2000,2000,2000,2000,2000,2000],
-            type: 'line',
-            borderColor: '#0070F3',
-            borderDash: [6, 3],
-            borderWidth: 2,
-            pointRadius: 0,
-            fill: false,
-          }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: false, min: 1000, max: 2600, grid: { color: '#F0F2F5' } },
-          x: { grid: { display: false } }
+  const weeklyData = [1850, 1920, 2050, 2350, 1980, 1860, 1120];
+  safeCreateChart('weeklyBar', {
+    type: 'bar',
+    data: {
+      labels: ['월', '화', '수', '목', '금', '토', '일'],
+      datasets: [
+        {
+          label: '섭취 칼로리',
+          data: weeklyData,
+          backgroundColor: weeklyData.map(v => v > 2000 ? '#FCA5A5' : '#4299E1'),
+          borderRadius: 6, borderSkipped: false,
+        },
+        {
+          label: '목표선',
+          data: [2000,2000,2000,2000,2000,2000,2000],
+          type: 'line',
+          borderColor: '#0070F3',
+          borderDash: [6, 3],
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: false,
         }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: false, min: 1000, max: 2600, grid: { color: '#F0F2F5' } },
+        x: { grid: { display: false } }
       }
-    });
-  }
+    }
+  });
 
   // 2) 3대 영양소 도넛 차트
-  const pieCanvas = document.getElementById('macroPie');
-  if (pieCanvas && !pieCanvas._chartInstance) {
-    pieCanvas._chartInstance = new Chart(pieCanvas.getContext('2d'), {
-      type: 'doughnut',
-      data: {
-        labels: ['탄수화물 50%', '단백질 30%', '지방 20%'],
-        datasets: [{
-          data: [50, 30, 20],
-          backgroundColor: ['#4299E1', '#48BB78', '#ED8936'],
-          borderWidth: 0, hoverOffset: 8,
-        }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } }
-      }
-    });
-  }
+  safeCreateChart('macroPie', {
+    type: 'doughnut',
+    data: {
+      labels: ['탄수화물 50%', '단백질 30%', '지방 20%'],
+      datasets: [{
+        data: [50, 30, 20],
+        backgroundColor: ['#4299E1', '#48BB78', '#ED8936'],
+        borderWidth: 0, hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } }
+    }
+  });
 
   // 3) 체중 변화 라인 차트
-  const lineCanvas = document.getElementById('weightLine');
-  if (lineCanvas && !lineCanvas._chartInstance) {
-    lineCanvas._chartInstance = new Chart(lineCanvas.getContext('2d'), {
-      type: 'line',
-      data: {
-        labels: ['5/1', '5/5', '5/8', '5/12', '5/15', '5/18', '5/21'],
-        datasets: [
-          {
-            label: '내 체중',
-            data: [78.0, 77.5, 77.0, 76.4, 76.0, 75.5, 75.2],
-            borderColor: '#0070F3',
-            backgroundColor: 'rgba(0,112,243,0.08)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#0070F3',
-            pointRadius: 5,
-          },
-          {
-            label: '목표',
-            data: [78,78,77,77,76,76,75],
-            borderColor: '#48BB78',
-            borderDash: [5, 4],
-            borderWidth: 2,
-            pointRadius: 0,
-            fill: false,
-          }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } },
-        scales: {
-          y: { min: 73, max: 79.5, grid: { color: '#F0F2F5' }, ticks: { callback: v => v + 'kg' } },
-          x: { grid: { display: false } }
+  safeCreateChart('weightLine', {
+    type: 'line',
+    data: {
+      labels: ['5/1', '5/5', '5/8', '5/12', '5/15', '5/18', '5/21'],
+      datasets: [
+        {
+          label: '내 체중',
+          data: [78.0, 77.5, 77.0, 76.4, 76.0, 75.5, 75.2],
+          borderColor: '#0070F3',
+          backgroundColor: 'rgba(0,112,243,0.08)',
+          fill: true, tension: 0.4,
+          pointBackgroundColor: '#0070F3', pointRadius: 5,
+        },
+        {
+          label: '목표',
+          data: [78,78,77,77,76,76,75],
+          borderColor: '#48BB78',
+          borderDash: [5, 4], borderWidth: 2,
+          pointRadius: 0, fill: false,
         }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } },
+      scales: {
+        y: { min: 73, max: 79.5, grid: { color: '#F0F2F5' }, ticks: { callback: v => v + 'kg' } },
+        x: { grid: { display: false } }
       }
-    });
-  }
+    }
+  });
 }
