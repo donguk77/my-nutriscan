@@ -1,3 +1,14 @@
+## [2026-05-21 16:48] 🎯 Chart.js 무한 크기 증가(Y축 늘어남) 버그 해결
+### 💬 진행 및 결정 사항 (Discussion)
+- 사용자의 피드백("이번주 칼로리 그래프가 y축이 계속 늘어나는 문제가 있어")을 확인하여 Chart.js 렌더링 버그 수정.
+- **원인**: 이전 픽스에서 `Chart.getChart().destroy()`로 기존 인스턴스를 날리긴 했지만, Chart.js가 `maintainAspectRatio: false` 모드일 때 캔버스를 감싸는 부모 컨테이너에 `position: relative`와 명확한 `height`가 없으면 브라우저 리사이즈/리렌더링 시마다 차트의 높이가 무한정 커지는 고질적인 이슈가 발생함.
+- **해결**: `styles.css`에 `.chart-container { position: relative; width: 100%; }` 유틸리티 클래스를 추가하고, `index.html` 내의 모든 `<canvas>`(대시보드 미니 차트 1개, 통계 차트 3개)를 해당 컨테이너로 감싸 높이를 강제 고정함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Changed**: `styles.css` — `.chart-container` 클래스 추가
+- **Changed**: `script.js` — 전역 관리 객체 `_activeCharts`를 두어 기존 Chart 인스턴스를 더 강력하게 파괴
+- **Changed**: `index.html` — 모든 차트 캔버스를 `<div class="chart-container" style="height: ...px">` 구조로 감쌈
+
 ## [2026-05-21 16:38] 🎯 10개 페이지 전면 재작성 및 SPA 라우팅 버그 완전 수정 — 모든 화면 브라우저 검증 완료
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자의 피드백("내가 보이는건 4장의 대시보드만 보이는데? 10장으로 만들어야 한다니깐?")을 즉시 반영하여 근본적인 원인을 분석함.
