@@ -1,160 +1,208 @@
-// NutriScan SPA Router & Logic
+// ============================================
+// NutriScan SPA Router v3.0 - Bulletproof
+// ============================================
 
-let chartsInitialized = false;
+const PAGES_WITH_GNB   = ['dashboard','diary','search','stats','result','settings'];
+const PAGES_WITHOUT_GNB = ['onboarding','auth','scanner','loading'];
+let chartsReady = false;
 
-// 전역 화면 전환 함수
-function navigateTo(viewId) {
-  // 1. 모든 뷰 숨김
-  const views = document.querySelectorAll('.page-view');
-  views.forEach(view => {
-    view.classList.remove('active');
-  });
+// ── 핵심 라우터 ──
+function showPage(id) {
+  // 1. 모든 페이지 숨기기
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-  // 2. 타겟 뷰 표시
-  const targetView = document.getElementById(viewId);
-  if (targetView) {
-    targetView.classList.add('active');
-  }
+  // 2. 대상 페이지 표시
+  const target = document.getElementById('page-' + id);
+  if (!target) { console.error('Page not found:', id); return; }
+  target.classList.add('active');
 
-  // 3. 네비게이션(GNB) 업데이트
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => item.classList.remove('active'));
-  
-  const activeNavItem = document.querySelector(`.nav-item[data-target="${viewId}"]`);
-  if (activeNavItem) {
-    activeNavItem.classList.add('active');
-  }
-
-  // 4. GNB 노출 여부 관리 (온보딩/로그인/스캐너/로딩 에서는 숨김)
-  const gnb = document.getElementById('globalNav');
-  if (viewId === 'view-onboarding' || viewId === 'view-auth' || viewId === 'view-scanner' || viewId === 'view-loading') {
+  // 3. GNB 표시/숨김
+  const gnb = document.getElementById('gnb');
+  if (PAGES_WITHOUT_GNB.includes(id)) {
     gnb.style.display = 'none';
   } else {
     gnb.style.display = 'block';
+    // GNB 활성 탭 업데이트
+    document.querySelectorAll('.nav-link').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-page') === id);
+    });
   }
-  
-  // 5. 통계 뷰 진입 시 차트 렌더링
-  if (viewId === 'view-stats' && !chartsInitialized) {
-    initCharts();
-    chartsInitialized = true;
+
+  // 4. 통계 페이지 진입 시 차트 초기화
+  if (id === 'stats' && !chartsReady) {
+    setTimeout(initCharts, 100); // DOM 렌더 후 실행
+    chartsReady = true;
   }
-  
-  // 맨 위로 스크롤
-  window.scrollTo(0, 0);
+
+  // 5. 대시보드 진입 시 미니 차트 초기화
+  if (id === 'dashboard') {
+    setTimeout(initMiniChart, 100);
+  }
+
+  // 맨 위로
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 이벤트 리스너 바인딩 (GNB 탭 이동용)
+// ── 초기 진입 ──
 document.addEventListener('DOMContentLoaded', () => {
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach(item => {
-    item.addEventListener('click', (e) => {
-      e.preventDefault();
-      const target = item.getAttribute('data-target');
-      if (target) navigateTo(target);
-    });
-  });
+  showPage('onboarding');
 });
 
-// 로그인 / 로그아웃 모의 동작
-function login() {
-  navigateTo('view-dashboard');
-}
-
-function logout() {
-  navigateTo('view-onboarding');
-}
-
-// AI 스캐너 셔터 트리거
+// ── AI 스캔 플로우 ──
 function triggerScan() {
-  // 플래시 효과
+  // 셔터 플래시
   const flash = document.createElement('div');
-  flash.style.position = 'fixed';
-  flash.style.inset = '0';
-  flash.style.backgroundColor = 'white';
-  flash.style.zIndex = '9999';
-  flash.style.transition = 'opacity 0.2s';
+  Object.assign(flash.style, {
+    position: 'fixed', inset: '0', background: 'white',
+    zIndex: '9999', opacity: '1', transition: 'opacity 0.3s'
+  });
   document.body.appendChild(flash);
-  
-  setTimeout(() => flash.style.opacity = '0', 50);
-  setTimeout(() => flash.remove(), 250);
+  setTimeout(() => flash.style.opacity = '0', 80);
+  setTimeout(() => { flash.remove(); showPage('loading'); }, 380);
 
-  // 로딩 화면 이동
+  // 로딩 스텝 애니메이션
   setTimeout(() => {
-    navigateTo('view-loading');
-    
-    // 가짜 로딩 스텝 연출
-    const steps = document.querySelectorAll('.loading-steps .step');
-    setTimeout(() => {
-      if(steps[2]) steps[2].textContent = "✓ 영양 데이터베이스 매핑 완료";
-    }, 1500);
+    const step = document.getElementById('stepMapping');
+    if (step) step.textContent = '✓ 영양 데이터베이스 매핑 완료';
+  }, 1400);
 
-    // 2.5초 후 결과 화면 이동
-    setTimeout(() => {
-      navigateTo('view-result');
-      // 로딩 스텝 초기화
-      if(steps[2]) steps[2].textContent = "↻ 영양 데이터베이스 매핑 중...";
-    }, 2500);
-  }, 400);
+  // 결과 화면으로 이동
+  setTimeout(() => {
+    showPage('result');
+    // 스텝 텍스트 초기화 (다음 스캔을 위해)
+    const step = document.getElementById('stepMapping');
+    if (step) step.textContent = '⟳ 영양 데이터베이스 매핑 중...';
+  }, 2600);
 }
 
-// Chart.js 통계 차트 렌더링 (가상 데이터)
+// ── 대시보드 미니 라인 차트 ──
+function initMiniChart() {
+  const canvas = document.getElementById('miniWeekChart');
+  if (!canvas || canvas._chartInstance) return;
+
+  const ctx = canvas.getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['월', '화', '수', '목', '금', '토', '일(오늘)'],
+      datasets: [{
+        label: 'kcal',
+        data: [1850, 1920, 2050, 2350, 1980, 1860, 1120],
+        backgroundColor: ctx => {
+          const v = [1850,1920,2050,2350,1980,1860,1120][ctx.dataIndex];
+          return v > 2000 ? '#FCA5A5' : ctx.dataIndex === 6 ? '#BAD8FD' : '#4299E1';
+        },
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: t => t.raw + ' kcal' } } },
+      scales: {
+        y: { beginAtZero: false, min: 1000, max: 2600, grid: { color: '#F0F2F5' }, ticks: { font: { size: 11 } } },
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+  canvas._chartInstance = chart;
+}
+
+// ── 통계 차트 ──
 function initCharts() {
-  // 1. 주간 칼로리 바 차트
-  const barCtx = document.getElementById('weeklyBarChart');
-  if (barCtx) {
-    new Chart(barCtx, {
+
+  // 1) 주간 칼로리 바 차트
+  const barCanvas = document.getElementById('weeklyBar');
+  if (barCanvas && !barCanvas._chartInstance) {
+    barCanvas._chartInstance = new Chart(barCanvas.getContext('2d'), {
       type: 'bar',
       data: {
         labels: ['월', '화', '수', '목', '금', '토', '일'],
-        datasets: [{
-          label: '섭취 칼로리 (kcal)',
-          data: [1850, 1920, 1880, 2350, 2050, 1980, 1420], // 목요일 초과, 일요일 진행중 데이터
-          backgroundColor: [
-            '#4299E1', '#4299E1', '#4299E1', '#F56565', '#4299E1', '#4299E1', '#EDF2F7'
-          ],
-          borderRadius: 4
-        }]
+        datasets: [
+          {
+            label: '섭취 칼로리',
+            data: [1850, 1920, 2050, 2350, 1980, 1860, 1120],
+            backgroundColor: d => d.raw > 2000 ? '#FCA5A5' : '#4299E1',
+            borderRadius: 6, borderSkipped: false,
+          },
+          {
+            label: '목표',
+            data: [2000,2000,2000,2000,2000,2000,2000],
+            type: 'line',
+            borderColor: '#0070F3',
+            borderDash: [6, 3],
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false }
-        },
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
         scales: {
-          y: {
-            beginAtZero: true,
-            max: 3000,
-            grid: { color: '#EDF2F7' }
-          },
-          x: {
-            grid: { display: false }
-          }
+          y: { beginAtZero: false, min: 1000, max: 2600, grid: { color: '#F0F2F5' } },
+          x: { grid: { display: false } }
         }
       }
     });
   }
 
-  // 2. 3대 영양소 도넛 차트
-  const pieCtx = document.getElementById('macroDoughnutChart');
-  if (pieCtx) {
-    new Chart(pieCtx, {
+  // 2) 3대 영양소 도넛 차트
+  const pieCanvas = document.getElementById('macroPie');
+  if (pieCanvas && !pieCanvas._chartInstance) {
+    pieCanvas._chartInstance = new Chart(pieCanvas.getContext('2d'), {
       type: 'doughnut',
       data: {
-        labels: ['탄수화물', '단백질', '지방'],
+        labels: ['탄수화물 50%', '단백질 30%', '지방 20%'],
         datasets: [{
           data: [50, 30, 20],
           backgroundColor: ['#4299E1', '#48BB78', '#ED8936'],
-          borderWidth: 0,
-          hoverOffset: 4
+          borderWidth: 0, hoverOffset: 8,
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '70%',
-        plugins: {
-          legend: { position: 'bottom' }
+        responsive: true, maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } }
+      }
+    });
+  }
+
+  // 3) 체중 변화 라인 차트
+  const lineCanvas = document.getElementById('weightLine');
+  if (lineCanvas && !lineCanvas._chartInstance) {
+    lineCanvas._chartInstance = new Chart(lineCanvas.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: ['5/1', '5/5', '5/8', '5/12', '5/15', '5/18', '5/21'],
+        datasets: [
+          {
+            label: '내 체중',
+            data: [78.0, 77.5, 77.0, 76.4, 76.0, 75.5, 75.2],
+            borderColor: '#0070F3',
+            backgroundColor: 'rgba(0,112,243,0.08)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#0070F3',
+            pointRadius: 5,
+          },
+          {
+            label: '목표',
+            data: [78,78,77,77,76,76,75],
+            borderColor: '#48BB78',
+            borderDash: [5, 4],
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 12 }, padding: 16 } } },
+        scales: {
+          y: { min: 73, max: 79.5, grid: { color: '#F0F2F5' }, ticks: { callback: v => v + 'kg' } },
+          x: { grid: { display: false } }
         }
       }
     });
