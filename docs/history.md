@@ -1,3 +1,27 @@
+## [2026-05-21 16:00] 🎯 10대 핵심 UI 모듈화 및 순수 JS 기반 SPA 라우팅 적용 완료
+### 💬 진행 및 결정 사항 (Discussion)
+- 사용자의 피드백("지금 하나만 연결이 되어 있어 수정을 해야해 ui 10개를 연결을 해야지")을 즉각 반영함.
+- 기존 단일 화면(Diary) 한계를 극복하고, 앱 전체 플로우를 담당하는 **10개의 핵심 화면(View)**을 모두 HTML 내에 마크업함.
+- **연결된 10개의 UI 뷰 (Views)**:
+  1. `view-onboarding` (시작하기/스플래시)
+  2. `view-auth` (로그인/회원가입)
+  3. `view-dashboard` (홈 대시보드 및 일일 요약)
+  4. `view-diary` (식단 기록 표)
+  5. `view-search` (음식 텍스트 검색 뷰)
+  6. `view-scanner` (AI 카메라 스캐너 뷰)
+  7. `view-loading` (AI 영양 분석 대기 뷰)
+  8. `view-result` (스캔 결과 및 저장 뷰)
+  9. `view-stats` (통계 및 주간 보고서 뷰)
+  10. `view-settings` (프로필 및 설정 뷰)
+- **자율 해결 (Workaround)**: 외부 프레임워크(React/Vue 등) 없이 순수 Vanilla JS 환경에서 부드럽게 화면을 전환하기 위해, `script.js`에 `navigateTo(viewId)` 라우팅 함수를 자체 구현함.
+  - 상단 네비게이션바(GNB)의 버튼 클릭 시 CSS의 `active` 클래스를 토글하여 화면이 전환되도록 처리함.
+  - 온보딩이나 로그인, 스캐너 화면과 같이 GNB가 방해되는 특수 화면 진입 시 GNB를 자동으로 숨기는 로직을 추가함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Changed**: `index.html` (10개 섹션 분리 및 화면별 더미 UI, 이벤트 바인딩 마크업 추가)
+- **Changed**: `styles.css` (SPA 라우팅을 위한 `page-view` 및 `.active` 트랜지션 클래스 추가, 스캐너 및 로딩 UI 전용 애니메이션 추가)
+- **Changed**: `script.js` (글로벌 라우팅 컨트롤러 `navigateTo()` 및 `triggerScan()` 등 플로우 이동 함수 구현)
+
 ## [2026-05-21 15:52] 🎯 사용자 피드백(혹평) 전면 수용 및 모던 웹 다이어리 UI 완전 재설계(Light Mode)
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자의 강력한 혹평("너무 별론데? 그냥 싹다 갈아엎고 내 영양 기록하는 웹 버전으로 벤치마크해서 고쳐줘")을 적극 수용함.
@@ -70,7 +94,7 @@
 ## [2026-05-21 15:28] 🎯 제공된 GitHub 저장소에 코드 업로드(Push) 완료
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자가 직접 빈 저장소(`https://github.com/donguk77/NutriScan-UI-Web`)를 생성해 준 것에 따라, 로컬에서 대기 중이던 코드를 해당 원격 저장소로 연결(`remote add origin`)하고 `main` 브랜치에 Push 작업을 성공적으로 완료함.
-- **최종 Vercel 연동**: 코 বোর্드가 GitHub에 완전히 넘어갔으므로, 사용자가 Vercel 대시보드에서 1-Click으로 Import할 수 있도록 다이렉트 연동 가이드를 제시함.
+- **최종 Vercel 연동**: 코드가 GitHub에 완전히 넘어갔으므로, 사용자가 Vercel 대시보드에서 1-Click으로 Import할 수 있도록 다이렉트 연동 가이드를 제시함.
 
 ### 🛠️ 코드 수정 내역 (Code Changes)
 - **Changed**: `.git/config` 에 원격 저장소(`origin`) URL 추가 및 `push` 완료.
