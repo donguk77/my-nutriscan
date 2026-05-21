@@ -1,71 +1,48 @@
+// NutriScan - Light Mode Benchmark Web App
+
+function openModal(mealType) {
+  const modal = document.getElementById('addFoodModal');
+  const title = document.getElementById('modalTitle');
+  
+  title.textContent = `${mealType} - 음식 검색 및 추가`;
+  modal.classList.add('active');
+  
+  // 모달 안쪽 클릭 시 닫히지 않도록 이벤트 버블링 방지
+  const modalContent = modal.querySelector('.modal-content');
+  modalContent.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+  
+  // 모달 바깥 영역 클릭 시 닫기
+  modal.addEventListener('click', closeModalOutside);
+}
+
+function closeModal() {
+  const modal = document.getElementById('addFoodModal');
+  modal.classList.remove('active');
+  modal.removeEventListener('click', closeModalOutside);
+}
+
+function closeModalOutside(e) {
+  if (e.target.id === 'addFoodModal') {
+    closeModal();
+  }
+}
+
+// 렌더링 후 이벤트 바인딩
 document.addEventListener('DOMContentLoaded', () => {
-  const scanStartBtn = document.getElementById('scanStartBtn');
-  const navScanBtn = document.getElementById('navScanBtn');
-  const closeScanBtn = document.getElementById('closeScanBtn');
-  const shutterButton = document.getElementById('shutterButton');
-  
-  const scanSection = document.getElementById('scanSection');
-  const loadingSection = document.getElementById('loadingSection');
-
-  // 화면 전환 함수 (Fluid Motion)
-  function showOverlay(section) {
-    section.style.display = 'flex';
-    setTimeout(() => {
-      section.classList.add('active');
-    }, 50);
-  }
-
-  function hideOverlay(section) {
-    section.classList.remove('active');
-    setTimeout(() => {
-      section.style.display = 'none';
-    }, 400); // CSS 트랜지션 시간과 동일하게
-  }
-
-  // 1. "AI 스캐너 열기" 또는 네비게이션 클릭 시 스캔 모달 열기
-  scanStartBtn.addEventListener('click', () => {
-    showOverlay(scanSection);
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
   });
   
-  navScanBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    showOverlay(scanSection);
-  });
-
-  // 닫기 버튼
-  closeScanBtn.addEventListener('click', () => {
-    hideOverlay(scanSection);
-  });
-
-  // 2. 셔터 버튼 클릭 시 찰칵 모션 후 로딩 화면으로 이동
-  shutterButton.addEventListener('click', () => {
-    // 찰칵 애니메이션 (화면 번쩍임)
-    const flash = document.createElement('div');
-    flash.style.position = 'fixed';
-    flash.style.top = '0';
-    flash.style.left = '0';
-    flash.style.width = '100vw';
-    flash.style.height = '100vh';
-    flash.style.backgroundColor = 'white';
-    flash.style.zIndex = '99999';
-    flash.style.transition = 'opacity 0.2s';
-    document.body.appendChild(flash);
-    
-    // 플래시 효과 페이드 아웃
-    setTimeout(() => {
-      flash.style.opacity = '0';
-      setTimeout(() => flash.remove(), 200);
-    }, 50);
-
-    // 셔터 찰칵 직후(400ms 대기) 카메라 닫고 로딩 화면 열기
-    setTimeout(() => {
-      hideOverlay(scanSection);
-      showOverlay(loadingSection);
-    }, 400); 
-
-    // 5초간 스캔 로딩 보여주고 복귀 (테스트용)
-    setTimeout(() => {
-      hideOverlay(loadingSection);
-    }, 5500); 
-  });
+  // AI 스캐너 (카메라 열기) 임시 이벤트
+  const aiScanBtn = document.querySelector('.btn-outline');
+  if(aiScanBtn) {
+    aiScanBtn.addEventListener('click', () => {
+      alert('AI 스캐너 데모는 연동 준비 중입니다.');
+    });
+  }
 });

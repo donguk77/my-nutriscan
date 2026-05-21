@@ -3,200 +3,261 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NutriScan Web App</title>
+  <title>NutriScan - Nutrition Tracker</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   
-  <!-- 배경 메쉬 그라데이션 -->
-  <div class="mesh-background"></div>
-
-  <div class="web-app-container">
-    
-    <!-- 좌측 사이드바 (Sidebar Navigation) -->
-    <aside class="sidebar premium-glass-card">
-      <div class="sidebar-header">
-        <h1 class="logo-text primary-text">NutriScan<span style="color:white;">.</span></h1>
+  <!-- 상단 글로벌 네비게이션 바 (GNB) -->
+  <header class="gnb">
+    <div class="gnb-container">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        NutriScan
       </div>
-      <nav class="sidebar-nav">
-        <a href="#" class="nav-item active">
-          <span class="nav-icon">📊</span>
-          <span class="nav-label">대시보드</span>
-        </a>
-        <a href="#" class="nav-item" id="navScanBtn">
-          <span class="nav-icon">📷</span>
-          <span class="nav-label">AI 스캔 분석</span>
-        </a>
-        <a href="#" class="nav-item">
-          <span class="nav-icon">📝</span>
-          <span class="nav-label">식단 일기</span>
-        </a>
-        <a href="#" class="nav-item">
-          <span class="nav-icon">⚙️</span>
-          <span class="nav-label">설정</span>
-        </a>
+      <nav class="gnb-nav">
+        <a href="#" class="nav-item">대시보드</a>
+        <a href="#" class="nav-item active">다이어리</a>
+        <a href="#" class="nav-item">통계 및 보고서</a>
+        <a href="#" class="nav-item">AI 스캐너</a>
       </nav>
-      <div class="sidebar-footer">
-        <button class="bouncing-gradient-button outline" style="height: 48px; font-size: 15px;">
-          <span class="button-text">로그아웃</span>
-        </button>
+      <div class="gnb-profile">
+        <div class="avatar">D</div>
+        <span class="profile-name">동욱 님</span>
       </div>
-    </aside>
+    </div>
+  </header>
 
-    <!-- 우측 메인 콘텐츠 영역 -->
-    <main class="main-content">
+  <!-- 메인 웹 콘텐츠 -->
+  <main class="main-container">
+    
+    <!-- 상단 날짜 컨트롤러 -->
+    <div class="date-controller">
+      <button class="icon-btn">&lt;</button>
+      <h1 class="current-date">오늘, 5월 21일</h1>
+      <button class="icon-btn">&gt;</button>
+    </div>
+
+    <!-- 일일 영양 요약 섹션 -->
+    <section class="summary-section">
+      <div class="card summary-card">
+        <div class="calorie-equation">
+          <div class="eq-item">
+            <span class="eq-value">2,000</span>
+            <span class="eq-label">목표</span>
+          </div>
+          <div class="eq-sign">-</div>
+          <div class="eq-item">
+            <span class="eq-value text-blue">1,420</span>
+            <span class="eq-label">음식</span>
+          </div>
+          <div class="eq-sign">+</div>
+          <div class="eq-item">
+            <span class="eq-value text-green">300</span>
+            <span class="eq-label">운동</span>
+          </div>
+          <div class="eq-sign">=</div>
+          <div class="eq-item highlight">
+            <span class="eq-value text-primary">880</span>
+            <span class="eq-label">남은 칼로리</span>
+          </div>
+        </div>
+
+        <div class="macros-summary mt-24">
+          <div class="macro-col">
+            <div class="macro-header">
+              <span>탄수화물</span>
+              <span>180 / 250g</span>
+            </div>
+            <div class="progress-bg"><div class="progress-fill fill-carb" style="width: 72%;"></div></div>
+          </div>
+          <div class="macro-col">
+            <div class="macro-header">
+              <span>단백질</span>
+              <span>80 / 120g</span>
+            </div>
+            <div class="progress-bg"><div class="progress-fill fill-protein" style="width: 66%;"></div></div>
+          </div>
+          <div class="macro-col">
+            <div class="macro-header">
+              <span>지방</span>
+              <span>40 / 65g</span>
+            </div>
+            <div class="progress-bg"><div class="progress-fill fill-fat" style="width: 61%;"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 식단 기록 (Diary) 리스트 -->
+    <section class="diary-section mt-24">
       
-      <!-- 헤더 -->
-      <header class="top-header">
-        <div>
-          <h2 class="headline-large">안녕하세요, 동욱님! 👋</h2>
-          <p class="body-medium mt-1">오늘 하루도 건강하게 기록해 볼까요?</p>
+      <!-- 아침 -->
+      <div class="meal-card card">
+        <div class="meal-header">
+          <h2 class="meal-title">아침</h2>
+          <span class="meal-kcal">395 kcal</span>
         </div>
-        <div class="header-actions">
-          <button class="bouncing-gradient-button" id="quickAddBtn" style="width: 140px; height: 48px;">
-            <span class="button-text">+ 직접 추가</span>
-          </button>
-          <div class="avatar-circle"></div>
+        <table class="food-table">
+          <thead>
+            <tr>
+              <th>음식명</th>
+              <th>제공량</th>
+              <th>칼로리</th>
+              <th>탄(g)</th>
+              <th>단(g)</th>
+              <th>지(g)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>사과 (생것)</td>
+              <td>1 개 (200g)</td>
+              <td>114</td>
+              <td>30</td>
+              <td>1</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>통밀 식빵</td>
+              <td>2 조각</td>
+              <td>138</td>
+              <td>24</td>
+              <td>6</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>삶은 계란</td>
+              <td>2 개</td>
+              <td>143</td>
+              <td>1</td>
+              <td>13</td>
+              <td>10</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="meal-footer">
+          <button class="add-food-btn" onclick="openModal('아침')">+ 음식 추가</button>
         </div>
-      </header>
+      </div>
 
-      <!-- 핵심 대시보드 화면 -->
-      <section id="dashboardSection" class="screen-section active">
-        <div class="dashboard-grid">
-          
-          <!-- 요약 카드 (Summary) -->
-          <div class="premium-glass-card summary-card bento-item">
-            <h3 class="title-large">오늘 섭취량</h3>
-            <div class="calorie-display mt-2">
-              <span class="display-large primary-text">1,420</span>
-              <span class="title-medium">/ 2,000 kcal</span>
-            </div>
-            
-            <div class="macros-container mt-4">
-              <div class="macro-row">
-                <div class="macro-label">
-                  <span class="body-large">탄수화물 (180g)</span>
-                  <span class="body-medium">50%</span>
-                </div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill primary" style="width: 50%;"></div></div>
-              </div>
-              <div class="macro-row mt-3">
-                <div class="macro-label">
-                  <span class="body-large">단백질 (80g)</span>
-                  <span class="body-medium">35%</span>
-                </div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill secondary" style="width: 35%;"></div></div>
-              </div>
-              <div class="macro-row mt-3">
-                <div class="macro-label">
-                  <span class="body-large">지방 (40g)</span>
-                  <span class="body-medium">15%</span>
-                </div>
-                <div class="progress-bar-bg"><div class="progress-bar-fill warning" style="width: 15%;"></div></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 퀵 액션 카드 (Quick Scan) -->
-          <div class="premium-glass-card action-card bento-item">
-            <div class="action-card-content">
-              <div class="icon-circle mb-3">📸</div>
-              <h3 class="title-large">음식 사진 스캔</h3>
-              <p class="body-medium mt-2 mb-4" style="text-align: center;">영양소를 자동으로 기록하려면<br>웹캠이나 카메라로 스캔하세요.</p>
-              <button class="bouncing-gradient-button" id="scanStartBtn" style="height: 56px; width: 80%;">
-                <span class="button-text">AI 스캐너 열기</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- 최근 기록 리스트 -->
-          <div class="premium-glass-card list-card bento-item">
-            <div class="card-header">
-              <h3 class="title-large">최근 기록</h3>
-              <a href="#" class="primary-text" style="text-decoration: none;">모두 보기</a>
-            </div>
-            <div class="log-list mt-4">
-              
-              <div class="log-item">
-                <div class="log-icon">🍗</div>
-                <div class="log-info">
-                  <h4 class="title-medium">닭가슴살 샐러드</h4>
-                  <p class="body-medium">오후 12:30 • 자동 스캔</p>
-                </div>
-                <div class="log-kcal">
-                  <span class="title-medium primary-text">320 kcal</span>
-                </div>
-              </div>
-
-              <div class="log-item mt-3">
-                <div class="log-icon">☕</div>
-                <div class="log-info">
-                  <h4 class="title-medium">아메리카노</h4>
-                  <p class="body-medium">오전 09:15 • 직접 입력</p>
-                </div>
-                <div class="log-kcal">
-                  <span class="title-medium primary-text">15 kcal</span>
-                </div>
-              </div>
-
-              <div class="log-item mt-3">
-                <div class="log-icon">🍎</div>
-                <div class="log-info">
-                  <h4 class="title-medium">아침 사과 1개</h4>
-                  <p class="body-medium">오전 08:00 • 직접 입력</p>
-                </div>
-                <div class="log-kcal">
-                  <span class="title-medium primary-text">95 kcal</span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
+      <!-- 점심 -->
+      <div class="meal-card card mt-24">
+        <div class="meal-header">
+          <h2 class="meal-title">점심</h2>
+          <span class="meal-kcal">650 kcal</span>
         </div>
-      </section>
-
-      <!-- 스캔 카메라 뷰 (화면 전체 덮기) -->
-      <section id="scanSection" class="screen-section overlay-section">
-        <div class="camera-viewfinder">
-          <button class="close-btn" id="closeScanBtn">✕</button>
-          <div class="dimmer-overlay"></div>
-          
-          <!-- 웹 반응형 스캔 렌즈 영역 -->
-          <div class="scan-hole web-hole">
-            <div class="bracket top-left"></div>
-            <div class="bracket top-right"></div>
-            <div class="bracket bottom-left"></div>
-            <div class="bracket bottom-right"></div>
-            <div class="laser-bar web-laser"></div>
-          </div>
-          
-          <div class="bottom-action-sheet">
-            <div class="shutter-ring">
-              <button class="shutter-button" id="shutterButton"></button>
-            </div>
-            <p class="body-large mt-4" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">화면에 음식을 맞추고 촬영하세요</p>
-          </div>
+        <table class="food-table">
+          <thead>
+            <tr>
+              <th>음식명</th>
+              <th>제공량</th>
+              <th>칼로리</th>
+              <th>탄(g)</th>
+              <th>단(g)</th>
+              <th>지(g)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>닭가슴살 샐러드 (발사믹 드레싱)</td>
+              <td>1 인분 (350g)</td>
+              <td>320</td>
+              <td>15</td>
+              <td>35</td>
+              <td>12</td>
+            </tr>
+            <tr>
+              <td>현미밥</td>
+              <td>1 공기 (210g)</td>
+              <td>330</td>
+              <td>70</td>
+              <td>6</td>
+              <td>2</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="meal-footer">
+          <button class="add-food-btn" onclick="openModal('점심')">+ 음식 추가</button>
         </div>
-      </section>
+      </div>
 
-      <!-- 분석 로딩 화면 -->
-      <section id="loadingSection" class="screen-section overlay-section">
-        <div class="loading-container">
-          <div class="orbital-wrapper">
-            <div class="premium-glass-card image-placeholder">
-              <span style="font-size: 4rem;">✨</span>
-            </div>
-            <div class="orbital-particle"></div>
-            <div class="orbital-particle delay"></div>
-          </div>
-          <h2 class="pulsing-text headline-large mt-8">AI 영양소 정밀 분석 중...</h2>
-          <p class="body-large mt-3">수십만 개의 데이터베이스와 교차 검증하고 있습니다.</p>
+      <!-- 저녁 -->
+      <div class="meal-card card mt-24">
+        <div class="meal-header">
+          <h2 class="meal-title">저녁</h2>
+          <span class="meal-kcal">375 kcal</span>
         </div>
-      </section>
+        <table class="food-table">
+          <thead>
+            <tr>
+              <th>음식명</th>
+              <th>제공량</th>
+              <th>칼로리</th>
+              <th>탄(g)</th>
+              <th>단(g)</th>
+              <th>지(g)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>소고기 미역국</td>
+              <td>1 대접</td>
+              <td>125</td>
+              <td>8</td>
+              <td>10</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>귀리밥</td>
+              <td>반 공기 (100g)</td>
+              <td>150</td>
+              <td>31</td>
+              <td>4</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>고등어 구이</td>
+              <td>반 토막 (50g)</td>
+              <td>100</td>
+              <td>0</td>
+              <td>9</td>
+              <td>7</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="meal-footer">
+          <button class="add-food-btn" onclick="openModal('저녁')">+ 음식 추가</button>
+        </div>
+      </div>
 
-    </main>
+    </section>
+  </main>
+
+  <!-- 음식 추가 모달 (간이 팝업) -->
+  <div id="addFoodModal" class="modal-overlay">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2 id="modalTitle">음식 검색 및 추가</h2>
+        <button class="close-modal" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="search-bar">
+          <input type="text" placeholder="음식명, 브랜드, 식당 검색...">
+          <button class="btn-primary">검색</button>
+        </div>
+        
+        <div class="ai-scan-banner mt-24">
+          <div class="banner-icon">📸</div>
+          <div class="banner-text">
+            <h3>AI 사진 스캔으로 자동 기록하기</h3>
+            <p>직접 입력하기 번거롭다면 사진 한 장으로 해결하세요.</p>
+          </div>
+          <button class="btn-outline">카메라 열기</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
