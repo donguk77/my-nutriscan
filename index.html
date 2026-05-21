@@ -3,78 +3,200 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NutriScan UI Remaster</title>
+  <title>NutriScan Web App</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   
-  <div class="app-container">
+  <!-- 배경 메쉬 그라데이션 -->
+  <div class="mesh-background"></div>
+
+  <div class="web-app-container">
     
-    <!-- 1. Home Dashboard 화면 -->
-    <section id="dashboardSection" class="screen-section active">
-      <div class="dashboard-header">
-        <h1 class="headline-large">NutriScan UI Master</h1>
-        <p class="subtitle primary-text">Design Spec 100% Loaded (Web Version).</p>
+    <!-- 좌측 사이드바 (Sidebar Navigation) -->
+    <aside class="sidebar premium-glass-card">
+      <div class="sidebar-header">
+        <h1 class="logo-text primary-text">NutriScan<span style="color:white;">.</span></h1>
       </div>
-
-      <div class="dashboard-content">
-        <!-- Premium Glass Card 컴포넌트 -->
-        <div class="premium-glass-card">
-          <h2 class="title-large">글래스모피즘 테스트</h2>
-          <p class="body-medium">반투명 표면 및 깊이감 렌더링 검수 중</p>
-        </div>
-
-        <!-- Bouncing Gradient Button 컴포넌트 -->
-        <button class="bouncing-gradient-button" id="scanButton">
-          <span class="button-text">스캔 시작하기</span>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">대시보드</span>
+        </a>
+        <a href="#" class="nav-item" id="navScanBtn">
+          <span class="nav-icon">📷</span>
+          <span class="nav-label">AI 스캔 분석</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">식단 일기</span>
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">설정</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="bouncing-gradient-button outline" style="height: 48px; font-size: 15px;">
+          <span class="button-text">로그아웃</span>
         </button>
       </div>
-    </section>
+    </aside>
 
-    <!-- 2. Advanced Camera Scan UI 화면 (설계서 10장) -->
-    <section id="scanSection" class="screen-section camera-viewfinder">
-      <!-- 어두운 오버레이 -->
-      <div class="dimmer-overlay"></div>
+    <!-- 우측 메인 콘텐츠 영역 -->
+    <main class="main-content">
       
-      <!-- 정중앙 뚫린 스캔 렌즈 영역 -->
-      <div class="scan-hole">
-        <!-- 네 모서리 브라켓 -->
-        <div class="bracket top-left"></div>
-        <div class="bracket top-right"></div>
-        <div class="bracket bottom-left"></div>
-        <div class="bracket bottom-right"></div>
-        
-        <!-- 레이저 스캔 애니메이션 -->
-        <div class="laser-bar"></div>
-      </div>
-      
-      <!-- 하단 셔터 액션 영역 -->
-      <div class="bottom-action-sheet">
-        <div class="shutter-ring">
-          <button class="shutter-button" id="shutterButton"></button>
+      <!-- 헤더 -->
+      <header class="top-header">
+        <div>
+          <h2 class="headline-large">안녕하세요, 동욱님! 👋</h2>
+          <p class="body-medium mt-1">오늘 하루도 건강하게 기록해 볼까요?</p>
         </div>
-        <p class="body-medium mt-4" style="color: white;">음식을 사각형 안에 맞추고 촬영하세요</p>
-      </div>
-    </section>
+        <div class="header-actions">
+          <button class="bouncing-gradient-button" id="quickAddBtn" style="width: 140px; height: 48px;">
+            <span class="button-text">+ 직접 추가</span>
+          </button>
+          <div class="avatar-circle"></div>
+        </div>
+      </header>
 
-    <!-- 3. Nutritional Analysis Result (Loading State) 화면 (설계서 11장) -->
-    <section id="loadingSection" class="screen-section">
-      <div class="loading-container">
-        <!-- 빙글빙글 도는 궤도 입자 -->
-        <div class="orbital-wrapper">
-          <div class="premium-glass-card image-placeholder">
-            <span style="font-size: 3rem;">🥗</span>
+      <!-- 핵심 대시보드 화면 -->
+      <section id="dashboardSection" class="screen-section active">
+        <div class="dashboard-grid">
+          
+          <!-- 요약 카드 (Summary) -->
+          <div class="premium-glass-card summary-card bento-item">
+            <h3 class="title-large">오늘 섭취량</h3>
+            <div class="calorie-display mt-2">
+              <span class="display-large primary-text">1,420</span>
+              <span class="title-medium">/ 2,000 kcal</span>
+            </div>
+            
+            <div class="macros-container mt-4">
+              <div class="macro-row">
+                <div class="macro-label">
+                  <span class="body-large">탄수화물 (180g)</span>
+                  <span class="body-medium">50%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill primary" style="width: 50%;"></div></div>
+              </div>
+              <div class="macro-row mt-3">
+                <div class="macro-label">
+                  <span class="body-large">단백질 (80g)</span>
+                  <span class="body-medium">35%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill secondary" style="width: 35%;"></div></div>
+              </div>
+              <div class="macro-row mt-3">
+                <div class="macro-label">
+                  <span class="body-large">지방 (40g)</span>
+                  <span class="body-medium">15%</span>
+                </div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill warning" style="width: 15%;"></div></div>
+              </div>
+            </div>
           </div>
-          <div class="orbital-particle"></div>
-          <div class="orbital-particle delay"></div>
-        </div>
-        
-        <!-- 투명도 깜빡임 텍스트 -->
-        <p class="pulsing-text title-medium primary-text mt-8">AI가 음식의 영양소를 스캔 중입니다...</p>
-      </div>
-    </section>
 
+          <!-- 퀵 액션 카드 (Quick Scan) -->
+          <div class="premium-glass-card action-card bento-item">
+            <div class="action-card-content">
+              <div class="icon-circle mb-3">📸</div>
+              <h3 class="title-large">음식 사진 스캔</h3>
+              <p class="body-medium mt-2 mb-4" style="text-align: center;">영양소를 자동으로 기록하려면<br>웹캠이나 카메라로 스캔하세요.</p>
+              <button class="bouncing-gradient-button" id="scanStartBtn" style="height: 56px; width: 80%;">
+                <span class="button-text">AI 스캐너 열기</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 최근 기록 리스트 -->
+          <div class="premium-glass-card list-card bento-item">
+            <div class="card-header">
+              <h3 class="title-large">최근 기록</h3>
+              <a href="#" class="primary-text" style="text-decoration: none;">모두 보기</a>
+            </div>
+            <div class="log-list mt-4">
+              
+              <div class="log-item">
+                <div class="log-icon">🍗</div>
+                <div class="log-info">
+                  <h4 class="title-medium">닭가슴살 샐러드</h4>
+                  <p class="body-medium">오후 12:30 • 자동 스캔</p>
+                </div>
+                <div class="log-kcal">
+                  <span class="title-medium primary-text">320 kcal</span>
+                </div>
+              </div>
+
+              <div class="log-item mt-3">
+                <div class="log-icon">☕</div>
+                <div class="log-info">
+                  <h4 class="title-medium">아메리카노</h4>
+                  <p class="body-medium">오전 09:15 • 직접 입력</p>
+                </div>
+                <div class="log-kcal">
+                  <span class="title-medium primary-text">15 kcal</span>
+                </div>
+              </div>
+
+              <div class="log-item mt-3">
+                <div class="log-icon">🍎</div>
+                <div class="log-info">
+                  <h4 class="title-medium">아침 사과 1개</h4>
+                  <p class="body-medium">오전 08:00 • 직접 입력</p>
+                </div>
+                <div class="log-kcal">
+                  <span class="title-medium primary-text">95 kcal</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- 스캔 카메라 뷰 (화면 전체 덮기) -->
+      <section id="scanSection" class="screen-section overlay-section">
+        <div class="camera-viewfinder">
+          <button class="close-btn" id="closeScanBtn">✕</button>
+          <div class="dimmer-overlay"></div>
+          
+          <!-- 웹 반응형 스캔 렌즈 영역 -->
+          <div class="scan-hole web-hole">
+            <div class="bracket top-left"></div>
+            <div class="bracket top-right"></div>
+            <div class="bracket bottom-left"></div>
+            <div class="bracket bottom-right"></div>
+            <div class="laser-bar web-laser"></div>
+          </div>
+          
+          <div class="bottom-action-sheet">
+            <div class="shutter-ring">
+              <button class="shutter-button" id="shutterButton"></button>
+            </div>
+            <p class="body-large mt-4" style="color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">화면에 음식을 맞추고 촬영하세요</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 분석 로딩 화면 -->
+      <section id="loadingSection" class="screen-section overlay-section">
+        <div class="loading-container">
+          <div class="orbital-wrapper">
+            <div class="premium-glass-card image-placeholder">
+              <span style="font-size: 4rem;">✨</span>
+            </div>
+            <div class="orbital-particle"></div>
+            <div class="orbital-particle delay"></div>
+          </div>
+          <h2 class="pulsing-text headline-large mt-8">AI 영양소 정밀 분석 중...</h2>
+          <p class="body-large mt-3">수십만 개의 데이터베이스와 교차 검증하고 있습니다.</p>
+        </div>
+      </section>
+
+    </main>
   </div>
 
   <script src="script.js"></script>
