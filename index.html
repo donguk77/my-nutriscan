@@ -6,10 +6,12 @@
   <title>NutriScan - Nutrition Tracker</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <link rel="stylesheet" href="styles.css">
+  <!-- Chart.js CDN for Detailed Stats -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   
-  <!-- 상단 글로벌 네비게이션 바 (GNB) - 로그인/온보딩 화면에서는 숨김 처리 -->
+  <!-- 상단 글로벌 네비게이션 바 (GNB) -->
   <header class="gnb" id="globalNav" style="display: none;">
     <div class="gnb-container">
       <div class="logo" onclick="navigateTo('view-dashboard')" style="cursor: pointer;">
@@ -19,12 +21,14 @@
       <nav class="gnb-nav">
         <a href="#" class="nav-item" data-target="view-dashboard">대시보드</a>
         <a href="#" class="nav-item" data-target="view-diary">다이어리</a>
-        <a href="#" class="nav-item" data-target="view-stats">통계 및 보고서</a>
-        <a href="#" class="nav-item" data-target="view-scanner">AI 스캐너</a>
+        <a href="#" class="nav-item" data-target="view-stats">통계/보고서</a>
+        <a href="#" class="nav-item" data-target="view-scanner">AI 카메라 스캔</a>
       </nav>
       <div class="gnb-profile" onclick="navigateTo('view-settings')">
-        <div class="avatar">D</div>
-        <span class="profile-name">동욱 님</span>
+        <div class="avatar">
+          <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" alt="Profile">
+        </div>
+        <span class="profile-name">이동욱 님</span>
       </div>
     </div>
   </header>
@@ -34,152 +38,381 @@
     <!-- 1. Onboarding UI -->
     <section id="view-onboarding" class="page-view active">
       <div class="center-content">
-        <span class="logo-icon" style="font-size: 64px;">🌿</span>
-        <h1 class="mt-24" style="font-size: 36px; color: var(--primary);">NutriScan</h1>
-        <p class="mt-16 text-muted" style="font-size: 18px;">사진 한 장으로 시작하는 완벽한 영양 관리</p>
-        <button class="btn-primary mt-24" style="padding: 16px 48px; font-size: 18px;" onclick="navigateTo('view-auth')">시작하기</button>
+        <span class="logo-icon" style="font-size: 80px;">🌿</span>
+        <h1 class="mt-24" style="font-size: 42px; color: var(--primary); font-weight: 800;">NutriScan Web</h1>
+        <p class="mt-16 text-muted" style="font-size: 18px;">음식 사진 한 장으로 끝나는 초간편 영양 기록 다이어리</p>
+        <button class="btn-primary mt-32" style="padding: 16px 64px; font-size: 18px;" onclick="navigateTo('view-auth')">시작하기</button>
       </div>
     </section>
 
     <!-- 2. Auth (Login) UI -->
     <section id="view-auth" class="page-view">
-      <div class="center-content card" style="padding: 48px; max-width: 400px; width: 100%;">
-        <h2 style="font-size: 24px; margin-bottom: 32px;">로그인 / 회원가입</h2>
+      <div class="center-content card" style="padding: 48px; max-width: 440px; width: 100%;">
+        <h2 style="font-size: 28px; margin-bottom: 8px;">환영합니다!</h2>
+        <p class="text-muted mb-32">건강한 라이프를 위한 기록을 시작하세요.</p>
         <input type="email" class="input-field" placeholder="이메일 주소" style="width: 100%; margin-bottom: 16px;">
         <input type="password" class="input-field" placeholder="비밀번호" style="width: 100%; margin-bottom: 24px;">
         <button class="btn-primary" style="width: 100%; padding: 14px;" onclick="login()">로그인</button>
-        <div class="divider mt-24 mb-24">또는</div>
-        <button class="btn-outline" style="width: 100%; padding: 14px;" onclick="login()">Google 계정으로 시작</button>
+        <div class="divider mt-24 mb-24">또는 1초만에 시작하기</div>
+        <button class="btn-outline mb-16" style="width: 100%; padding: 14px;" onclick="login()">
+          <span style="font-weight:bold; color:#EA4335;">G</span>oogle 계정으로 시작
+        </button>
+        <button class="btn-outline" style="width: 100%; padding: 14px; color: #181600; border-color: #FEE500; background-color: #FEE500;" onclick="login()">
+          카카오 계정으로 시작
+        </button>
       </div>
     </section>
 
-    <!-- 3. Dashboard UI -->
+    <!-- 3. Dashboard UI (Rich Mock Data) -->
     <section id="view-dashboard" class="page-view main-width">
-      <h1 class="page-title">안녕하세요, 동욱님! 👋</h1>
-      <p class="text-muted mb-24">오늘 하루 요약입니다.</p>
+      <div class="flex-between mb-32">
+        <div>
+          <h1 class="page-title">안녕하세요, 이동욱님! 👋</h1>
+          <p class="text-muted mt-8">현재 5일 연속 기록 중입니다. 훌륭해요!</p>
+        </div>
+        <button class="btn-primary" onclick="navigateTo('view-scanner')">📸 AI 빠른 스캔</button>
+      </div>
       
-      <div class="card summary-card mb-24">
-        <h3>오늘 남은 칼로리</h3>
-        <h1 style="font-size: 48px; color: var(--primary); margin: 16px 0;">880 kcal</h1>
-        <div class="progress-bg"><div class="progress-fill fill-carb" style="width: 60%;"></div></div>
-        <button class="btn-primary mt-24" onclick="navigateTo('view-diary')">식단 일기 쓰기</button>
+      <!-- 데일리 오버뷰 -->
+      <div class="grid-2col mb-32">
+        <div class="card p-32">
+          <h3>오늘 남은 칼로리</h3>
+          <div style="display: flex; align-items: baseline; gap: 8px; margin: 16px 0;">
+            <h1 style="font-size: 56px; color: var(--primary); font-weight: 800;">880</h1>
+            <span style="font-size: 20px; color: var(--text-muted);">/ 2,000 kcal</span>
+          </div>
+          <div class="progress-bg mt-8"><div class="progress-fill fill-carb" style="width: 56%;"></div></div>
+          <p class="text-muted mt-16" style="font-size: 14px;">어제 이 시간보다 120kcal 덜 섭취했어요.</p>
+        </div>
+
+        <div class="card p-32">
+          <h3 class="mb-16">매크로 영양소 달성률</h3>
+          <div class="macro-row mb-16">
+            <div class="flex-between mb-8"><span class="fw-500">탄수화물</span><span class="text-muted">120/250g (48%)</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-carb" style="width: 48%;"></div></div>
+          </div>
+          <div class="macro-row mb-16">
+            <div class="flex-between mb-8"><span class="fw-500">단백질</span><span class="text-muted">90/120g (75%)</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-protein" style="width: 75%;"></div></div>
+          </div>
+          <div class="macro-row">
+            <div class="flex-between mb-8"><span class="fw-500">지방</span><span class="text-muted">35/65g (53%)</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-fat" style="width: 53%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 최근 스캔 리스트 (Mock Data) -->
+      <h3 class="mb-16">최근 스캔한 음식</h3>
+      <div class="recent-scans-grid">
+        <div class="scan-card card">
+          <div class="scan-img" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80')"></div>
+          <div class="p-16">
+            <h4 class="fw-600 mb-4">건강한 샐러드 보울</h4>
+            <p class="text-muted text-sm">320 kcal • 점심</p>
+          </div>
+        </div>
+        <div class="scan-card card">
+          <div class="scan-img" style="background-image: url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80')"></div>
+          <div class="p-16">
+            <h4 class="fw-600 mb-4">아메리카노</h4>
+            <p class="text-muted text-sm">15 kcal • 간식</p>
+          </div>
+        </div>
+        <div class="scan-card card">
+          <div class="scan-img" style="background-image: url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&q=80')"></div>
+          <div class="p-16">
+            <h4 class="fw-600 mb-4">구운 치킨 타이</h4>
+            <p class="text-muted text-sm">450 kcal • 어제 저녁</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 4. Diary UI (기존 벤치마크 UI) -->
+    <!-- 4. Diary UI (Detailed Mock Data) -->
     <section id="view-diary" class="page-view main-width">
       <div class="date-controller">
         <button class="icon-btn">&lt;</button>
         <h1 class="current-date">오늘, 5월 21일</h1>
         <button class="icon-btn">&gt;</button>
       </div>
-      <section class="summary-section">
-        <div class="card summary-card">
-          <div class="calorie-equation">
-            <div class="eq-item"><span class="eq-value">2,000</span><span class="eq-label">목표</span></div><div class="eq-sign">-</div>
-            <div class="eq-item"><span class="eq-value text-blue">1,420</span><span class="eq-label">음식</span></div><div class="eq-sign">+</div>
-            <div class="eq-item"><span class="eq-value text-green">300</span><span class="eq-label">운동</span></div><div class="eq-sign">=</div>
-            <div class="eq-item highlight"><span class="eq-value text-primary">880</span><span class="eq-label">남은 칼로리</span></div>
-          </div>
-          <div class="macros-summary mt-24">
-            <div class="macro-col"><div class="macro-header"><span>탄수화물</span><span>180 / 250g</span></div><div class="progress-bg"><div class="progress-fill fill-carb" style="width: 72%;"></div></div></div>
-            <div class="macro-col"><div class="macro-header"><span>단백질</span><span>80 / 120g</span></div><div class="progress-bg"><div class="progress-fill fill-protein" style="width: 66%;"></div></div></div>
-            <div class="macro-col"><div class="macro-header"><span>지방</span><span>40 / 65g</span></div><div class="progress-bg"><div class="progress-fill fill-fat" style="width: 61%;"></div></div></div>
-          </div>
-        </div>
-      </section>
-      <section class="diary-section mt-24">
+
+      <section class="diary-section mt-32">
+        
         <!-- 아침 -->
-        <div class="meal-card card">
-          <div class="meal-header"><h2 class="meal-title">아침</h2><span class="meal-kcal">395 kcal</span></div>
+        <div class="meal-card card mb-24">
+          <div class="meal-header"><h2 class="meal-title">아침 <span class="time-stamp">08:30 AM</span></h2><span class="meal-kcal text-primary">395 kcal</span></div>
           <table class="food-table">
-            <thead><tr><th>음식명</th><th>제공량</th><th>칼로리</th></tr></thead>
-            <tbody><tr><td>사과 (생것)</td><td>1 개 (200g)</td><td>114</td></tr></tbody>
+            <thead><tr><th>음식명</th><th>제공량</th><th>칼로리</th><th>탄</th><th>단</th><th>지</th></tr></thead>
+            <tbody>
+              <tr><td class="fw-500">사과 (생것)</td><td class="text-muted">1개 (200g)</td><td class="fw-600">114</td><td>30g</td><td>1g</td><td>0g</td></tr>
+              <tr><td class="fw-500">통밀 식빵</td><td class="text-muted">2조각 (70g)</td><td class="fw-600">138</td><td>24g</td><td>6g</td><td>2g</td></tr>
+              <tr><td class="fw-500">삶은 계란</td><td class="text-muted">2개 (100g)</td><td class="fw-600">143</td><td>1g</td><td>13g</td><td>10g</td></tr>
+            </tbody>
           </table>
-          <div class="meal-footer"><button class="add-food-btn" onclick="navigateTo('view-search')">+ 음식 추가</button></div>
+          <div class="meal-footer flex-between">
+            <button class="add-food-btn" onclick="navigateTo('view-search')">+ 음식 추가</button>
+            <span class="text-muted text-sm">탄:55g / 단:20g / 지:12g</span>
+          </div>
         </div>
+
+        <!-- 점심 -->
+        <div class="meal-card card mb-24">
+          <div class="meal-header"><h2 class="meal-title">점심 <span class="time-stamp">12:45 PM</span></h2><span class="meal-kcal text-primary">650 kcal</span></div>
+          <table class="food-table">
+            <thead><tr><th>음식명</th><th>제공량</th><th>칼로리</th><th>탄</th><th>단</th><th>지</th></tr></thead>
+            <tbody>
+              <tr><td class="fw-500">닭가슴살 샐러드 보울</td><td class="text-muted">1인분 (350g)</td><td class="fw-600">320</td><td>15g</td><td>35g</td><td>12g</td></tr>
+              <tr><td class="fw-500">현미밥</td><td class="text-muted">1공기 (210g)</td><td class="fw-600">330</td><td>70g</td><td>6g</td><td>2g</td></tr>
+            </tbody>
+          </table>
+          <div class="meal-footer flex-between">
+            <button class="add-food-btn" onclick="navigateTo('view-search')">+ 음식 추가</button>
+            <span class="text-muted text-sm">탄:85g / 단:41g / 지:14g</span>
+          </div>
+        </div>
+
+        <!-- 저녁 (비어있음) -->
+        <div class="meal-card card mb-24">
+          <div class="meal-header"><h2 class="meal-title text-muted">저녁</h2><span class="meal-kcal text-muted">0 kcal</span></div>
+          <div class="p-32 text-center">
+            <p class="text-muted mb-16">아직 저녁 식사를 기록하지 않으셨네요.</p>
+            <button class="btn-primary" onclick="navigateTo('view-search')">저녁 식사 기록하기</button>
+          </div>
+        </div>
+
       </section>
     </section>
 
-    <!-- 5. Food Search UI (음식 검색 뷰) -->
+    <!-- 5. Food Search UI -->
     <section id="view-search" class="page-view main-width">
       <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 24px;">
         <button class="icon-btn" onclick="navigateTo('view-diary')">←</button>
-        <h1 class="page-title">음식 데이터베이스 검색</h1>
+        <h1 class="page-title">음식 검색 및 추가</h1>
       </div>
-      <div class="search-bar mb-24">
-        <input type="text" class="input-field" placeholder="음식명, 브랜드 검색...">
+      
+      <div class="search-bar mb-32">
+        <input type="text" class="input-field" placeholder="음식명, 식당명, 브랜드 검색... (예: 스타벅스 아메리카노)" style="flex-grow: 1;">
         <button class="btn-primary">검색</button>
+        <button class="btn-outline" title="바코드 스캔" onclick="alert('바코드 스캐너 모듈 연동 대기 중')">||| 바코드</button>
       </div>
-      <div class="card p-24" style="text-align: center;">
-        <p class="mb-16">직접 입력이 귀찮으신가요?</p>
-        <button class="btn-outline" style="width: 100%; padding: 16px;" onclick="navigateTo('view-scanner')">📸 AI 사진으로 스캔하기</button>
+
+      <div class="ai-banner card p-24 mb-32 flex-between" style="background-color: #F0F9FF; border-color: #BAE6FD;">
+        <div>
+          <h3 class="text-blue mb-8">AI 카메라 스캔 추천</h3>
+          <p class="text-muted">검색하기 번거롭다면 영양성분표나 음식을 바로 찍어보세요.</p>
+        </div>
+        <button class="btn-primary" style="background-color: #0284C7;" onclick="navigateTo('view-scanner')">📸 카메라 열기</button>
       </div>
+
+      <h3 class="mb-16">최근 검색어 및 자주 먹는 음식</h3>
+      <ul class="food-list">
+        <li class="food-list-item">
+          <div class="flex-between w-100">
+            <div>
+              <h4 class="fw-600">스타벅스 아이스 아메리카노 (Tall)</h4>
+              <p class="text-muted text-sm mt-4">1잔 (355ml)</p>
+            </div>
+            <div class="text-right">
+              <span class="fw-600 text-primary">15 kcal</span>
+              <button class="add-icon-btn ml-16">+</button>
+            </div>
+          </div>
+        </li>
+        <li class="food-list-item">
+          <div class="flex-between w-100">
+            <div>
+              <h4 class="fw-600">CJ 햇반 (흰쌀밥)</h4>
+              <p class="text-muted text-sm mt-4">1개 (210g)</p>
+            </div>
+            <div class="text-right">
+              <span class="fw-600 text-primary">315 kcal</span>
+              <button class="add-icon-btn ml-16">+</button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </section>
 
     <!-- 6. AI Scanner UI -->
     <section id="view-scanner" class="page-view">
       <div class="scanner-container">
-        <div class="viewfinder">
-          <div class="scan-laser"></div>
+        <div class="scanner-top-bar">
+          <button class="close-btn" onclick="navigateTo('view-dashboard')">✕</button>
+          <span style="color: white; font-weight: 600;">AI 비전 스캐너</span>
+          <div style="width: 32px;"></div> <!-- Spacer -->
         </div>
+        
+        <div class="viewfinder mt-32">
+          <!-- 가상의 카메라 프리뷰 이미지 -->
+          <div style="width: 100%; height: 100%; background: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80') center/cover; opacity: 0.8;"></div>
+          <div class="scan-laser"></div>
+          <div class="bracket top-left"></div><div class="bracket top-right"></div>
+          <div class="bracket bottom-left"></div><div class="bracket bottom-right"></div>
+        </div>
+        
         <div class="scanner-controls">
-          <p style="color: white; margin-bottom: 24px;">음식을 사각형 안에 맞추고 촬영하세요</p>
+          <p style="color: white; font-size: 16px; margin-bottom: 24px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">음식을 사각형 안에 맞추고 촬영하세요</p>
           <button class="shutter-btn" onclick="triggerScan()"></button>
-          <button class="btn-outline mt-24" style="color: white; border-color: white;" onclick="navigateTo('view-dashboard')">취소</button>
+          <div class="mode-selector mt-24">
+            <span class="mode-item active">음식 인식</span>
+            <span class="mode-item">영양성분표 OCR</span>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- 7. Scan Loading UI -->
     <section id="view-loading" class="page-view">
-      <div class="center-content">
-        <div class="loader-spinner mb-24"></div>
-        <h2 style="font-size: 24px;">AI 영양소 정밀 분석 중...</h2>
-        <p class="text-muted mt-16">수십만 개의 데이터베이스와 교차 검증하고 있습니다.</p>
+      <div class="center-content bg-loading">
+        <div class="loader-spinner mb-32"></div>
+        <h2 style="font-size: 28px; font-weight: 700; color: var(--text-main);">이미지 딥러닝 분석 중...</h2>
+        <p class="text-muted mt-16 text-lg">음식의 종류와 예상 중량을 계산하고 있습니다.</p>
+        
+        <!-- 가짜 프로그레스 텍스트 연출 -->
+        <div class="loading-steps mt-32 text-left" style="width: 240px;">
+          <p class="step done">✓ 엣지 디텍션 완료</p>
+          <p class="step done">✓ 식별 모델 가동 (98% 일치)</p>
+          <p class="step active">↻ 영양 데이터베이스 매핑 중...</p>
+        </div>
       </div>
     </section>
 
-    <!-- 8. Scan Result UI -->
+    <!-- 8. Scan Result UI (Detailed Mock Data) -->
     <section id="view-result" class="page-view main-width">
-      <h1 class="page-title text-primary mb-24">분석 완료! 🎉</h1>
-      <div class="card p-24 mb-24 text-center">
-        <h2 style="font-size: 28px;">닭가슴살 샐러드</h2>
-        <p class="text-muted mt-8">정확도 98%</p>
+      <div class="flex-between mb-24">
+        <h1 class="page-title text-primary">스캔 분석 완료 🎉</h1>
+        <button class="icon-btn" onclick="navigateTo('view-scanner')">✕</button>
       </div>
+      
+      <div class="grid-2col mb-24">
+        <div class="card p-0 overflow-hidden">
+          <div style="height: 200px; background: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80') center/cover;"></div>
+          <div class="p-24">
+            <h2 style="font-size: 24px;">신선한 연어 샐러드 보울</h2>
+            <p class="text-muted mt-4">AI 신뢰도: 99.2% • 추정 중량: 320g</p>
+            <h1 style="font-size: 42px; color: var(--primary); margin-top: 16px;">385 kcal</h1>
+          </div>
+        </div>
+
+        <div class="card p-24">
+          <h3 class="mb-16">상세 영양 성분</h3>
+          <div class="macro-row mb-12">
+            <div class="flex-between mb-4"><span class="fw-500">탄수화물 (Carbs)</span><span>22g</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-carb" style="width: 22%;"></div></div>
+          </div>
+          <div class="macro-row mb-12">
+            <div class="flex-between mb-4"><span class="fw-500">단백질 (Protein)</span><span>38g</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-protein" style="width: 65%;"></div></div>
+          </div>
+          <div class="macro-row mb-24">
+            <div class="flex-between mb-4"><span class="fw-500">지방 (Fat)</span><span>14g</span></div>
+            <div class="progress-bg"><div class="progress-fill fill-fat" style="width: 25%;"></div></div>
+          </div>
+          
+          <hr style="border:0; border-top: 1px solid var(--border-color); margin-bottom: 16px;">
+          
+          <div class="flex-between mb-8"><span class="text-muted">나트륨</span><span class="fw-500">450mg</span></div>
+          <div class="flex-between mb-8"><span class="text-muted">당류</span><span class="fw-500">8g</span></div>
+          <div class="flex-between"><span class="text-muted">식이섬유</span><span class="fw-500">12g</span></div>
+        </div>
+      </div>
+
       <div class="card p-24 text-center">
-        <h1 style="font-size: 48px; color: var(--primary);">320 kcal</h1>
-        <p class="mt-16 text-muted">다이어리에 이 기록을 저장하시겠습니까?</p>
-        <div style="display: flex; gap: 16px; justify-content: center; margin-top: 24px;">
-          <button class="btn-outline" onclick="navigateTo('view-scanner')">다시 찍기</button>
+        <h3 class="mb-16">다이어리에 기록하시겠습니까?</h3>
+        <select class="input-field mb-24" style="width: 200px;">
+          <option>점심 (현재 시간)</option>
+          <option>아침</option>
+          <option>저녁</option>
+          <option>간식</option>
+        </select>
+        <div style="display: flex; gap: 16px; justify-content: center;">
+          <button class="btn-outline" onclick="navigateTo('view-scanner')">다시 스캔</button>
           <button class="btn-primary" onclick="navigateTo('view-diary')">일기에 저장</button>
         </div>
       </div>
     </section>
 
-    <!-- 9. Statistics UI -->
+    <!-- 9. Statistics UI (Rich Charts) -->
     <section id="view-stats" class="page-view main-width">
-      <h1 class="page-title mb-24">주간 통계 보고서</h1>
-      <div class="card p-24" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
-        <p class="text-muted">이번 주 칼로리 섭취 그래프가 여기에 표시됩니다.</p>
+      <h1 class="page-title mb-32">주간 리포트 📊</h1>
+      
+      <div class="grid-2col mb-24">
+        <!-- 바 차트 영역 -->
+        <div class="card p-24">
+          <div class="flex-between mb-16">
+            <h3>주간 칼로리 섭취량</h3>
+            <span class="text-muted text-sm">목표: 2,000 kcal</span>
+          </div>
+          <div style="position: relative; height: 250px; width: 100%;">
+            <canvas id="weeklyBarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 도넛 차트 영역 -->
+        <div class="card p-24">
+          <h3>주간 3대 영양소 평균 비율</h3>
+          <div style="position: relative; height: 250px; width: 100%; display: flex; justify-content: center; margin-top: 16px;">
+            <canvas id="macroDoughnutChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-24">
+        <h3 class="mb-16">AI 헬스 피드백</h3>
+        <div class="ai-feedback-box" style="background: #F8FAFC; border-left: 4px solid var(--primary); padding: 16px; border-radius: 4px;">
+          <p class="fw-600 mb-8 text-primary">"안정적인 단백질 섭취가 돋보이는 한 주입니다!"</p>
+          <p class="text-muted text-sm">목요일에 칼로리 초과(2,350kcal)가 있었으나, 전반적으로 훌륭한 주간 목표(평균 1,920kcal)를 달성하고 있습니다. 나트륨 섭취량이 약간 높은 편이니 수분 섭취를 늘려주세요.</p>
+        </div>
       </div>
     </section>
 
-    <!-- 10. Settings (Profile) UI -->
+    <!-- 10. Settings (Profile) UI (Detailed Options) -->
     <section id="view-settings" class="page-view main-width">
-      <h1 class="page-title mb-24">내 정보 및 설정</h1>
-      <div class="card p-24 mb-24">
-        <h3>프로필</h3>
-        <p class="text-muted mt-8">동욱 님 (donguk77@example.com)</p>
-      </div>
-      <div class="card p-24">
-        <h3>목표 설정</h3>
-        <div style="display: flex; justify-content: space-between; margin-top: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
-          <span>일일 목표 칼로리</span>
-          <span style="font-weight: bold;">2,000 kcal</span>
+      <h1 class="page-title mb-32">설정</h1>
+      
+      <div class="card p-24 mb-24 flex-between" style="align-items: center;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="avatar" style="width: 64px; height: 64px;">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&q=80" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">
+          </div>
+          <div>
+            <h2 style="font-size: 20px;">이동욱 님</h2>
+            <p class="text-muted mt-4">donguk77@example.com</p>
+          </div>
         </div>
-        <button class="btn-outline mt-24" style="width: 100%; color: red; border-color: red;" onclick="logout()">로그아웃</button>
+        <button class="btn-outline">프로필 수정</button>
       </div>
+
+      <div class="card p-0 mb-24 overflow-hidden">
+        <div class="settings-group-header">나의 목표</div>
+        <div class="settings-item flex-between">
+          <span>일일 목표 칼로리</span>
+          <div class="flex-center gap-8"><span class="fw-600 text-primary">2,000 kcal</span> <span class="text-muted">></span></div>
+        </div>
+        <div class="settings-item flex-between">
+          <span>현재 체중 / 목표 체중</span>
+          <div class="flex-center gap-8"><span class="fw-600">75kg / 70kg</span> <span class="text-muted">></span></div>
+        </div>
+      </div>
+
+      <div class="card p-0 mb-32 overflow-hidden">
+        <div class="settings-group-header">앱 설정 및 연동</div>
+        <div class="settings-item flex-between">
+          <span>Apple Health / Google Fit 연동</span>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="settings-item flex-between">
+          <span>식사 시간 리마인더 알림</span>
+          <label class="toggle-switch"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="settings-item flex-between">
+          <span>다크 모드 테마 적용</span>
+          <label class="toggle-switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <button class="btn-outline" style="width: 100%; color: #E53E3E; border-color: #FEB2B2; background-color: #FFF5F5;" onclick="logout()">로그아웃</button>
     </section>
 
   </main>
