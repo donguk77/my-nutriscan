@@ -49,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── AI 스캔 플로우 ──
 function triggerScan() {
-  // 셔터 플래시
+  const activeTab = document.querySelector('.smode.active');
+  const mode = activeTab ? activeTab.getAttribute('data-mode') : 'food';
+
+  // 1) 셔터 플래시
   const flash = document.createElement('div');
   Object.assign(flash.style, {
     position: 'fixed', inset: '0', background: 'white',
@@ -57,21 +60,72 @@ function triggerScan() {
   });
   document.body.appendChild(flash);
   setTimeout(() => flash.style.opacity = '0', 80);
-  setTimeout(() => { flash.remove(); showPage('loading'); }, 380);
+  
+  // 2) 로딩 화면 전환 및 스텝 문구 설정
+  setTimeout(() => { 
+    flash.remove(); 
+    
+    // 모드별 로딩 텍스트 설정
+    const lsteps = document.querySelectorAll('.lstep');
+    if (mode === 'ocr') {
+      lsteps[0].textContent = '✓ 이미지 내 텍스트 영역 감지 완료';
+      lsteps[1].textContent = '✓ 영양성분표 OCR 텍스트 추출 (신뢰도 99.1%)';
+      lsteps[2].textContent = '⟳ 영양소 데이터 구조 파싱 중...';
+    } else if (mode === 'barcode') {
+      lsteps[0].textContent = '✓ 바코드 영역 감지 완료';
+      lsteps[1].textContent = '✓ 바코드 번호 판독 완료 (8801043015...)';
+      lsteps[2].textContent = '⟳ 상품 데이터베이스 조회 중...';
+    } else {
+      lsteps[0].textContent = '✓ 이미지 엣지 감지 완료';
+      lsteps[1].textContent = '✓ 음식 분류 모델 실행 (신뢰도 98.5%)';
+      lsteps[2].textContent = '⟳ 영양 데이터베이스 매핑 중...';
+    }
+    
+    showPage('loading'); 
+  }, 380);
 
-  // 로딩 스텝 애니메이션
+  // 3) 로딩 스텝 애니메이션
   setTimeout(() => {
-    const step = document.getElementById('stepMapping');
-    if (step) step.textContent = '✓ 영양 데이터베이스 매핑 완료';
+    const lsteps = document.querySelectorAll('.lstep');
+    if (mode === 'ocr') lsteps[2].textContent = '✓ 영양소 데이터 구조 파싱 완료';
+    else if (mode === 'barcode') lsteps[2].textContent = '✓ 상품 데이터베이스 조회 완료';
+    else lsteps[2].textContent = '✓ 영양 데이터베이스 매핑 완료';
   }, 1400);
 
-  // 결과 화면으로 이동
+  // 4) 결과 화면 이동
   setTimeout(() => {
+    updateResultMockData(mode); // 결과 UI 업데이트
     showPage('result');
-    // 스텝 텍스트 초기화 (다음 스캔을 위해)
-    const step = document.getElementById('stepMapping');
-    if (step) step.textContent = '⟳ 영양 데이터베이스 매핑 중...';
   }, 2600);
+}
+
+// 모드별 가상 데이터 주입 헬퍼
+function updateResultMockData(mode) {
+  const resultTitle = document.querySelector('.result-food-name');
+  const resultImg = document.querySelector('.result-food-img');
+  const resultKcal = document.querySelector('.result-kcal');
+  const resultAiBadge = document.querySelector('.ai-badge');
+  const aiComment = document.querySelector('.ai-comment-text');
+
+  if (mode === 'ocr') {
+    resultImg.style.background = "url('assets/ocr_sample.png') center/cover";
+    resultTitle.textContent = "인식된 영양성분표";
+    resultAiBadge.textContent = "OCR 스캔 · 신뢰도 99.1%";
+    resultKcal.innerHTML = '120 <span class="kcal-unit">kcal</span>';
+    aiComment.textContent = "💡 OCR 판독 결과입니다. 당류(8g)가 다소 높게 측정되었습니다.";
+  } else if (mode === 'barcode') {
+    resultImg.style.background = "url('assets/barcode_sample.png') center/cover";
+    resultTitle.textContent = "포카칩 오리지널";
+    resultAiBadge.textContent = "바코드 매칭 성공";
+    resultKcal.innerHTML = '377 <span class="kcal-unit">kcal</span>';
+    aiComment.textContent = "💡 바코드로 인식된 가공식품입니다. 나트륨과 포화지방에 유의하세요!";
+  } else {
+    resultImg.style.background = "url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&q=80') center/cover";
+    resultTitle.textContent = "연어 샐러드 보울";
+    resultAiBadge.textContent = "AI 인식 · 신뢰도 99.2%";
+    resultKcal.innerHTML = '385 <span class="kcal-unit">kcal</span>';
+    aiComment.textContent = "💡 단백질 비율이 매우 높은 식사입니다. 오늘 단백질 목표의 32%를 한 번에 채웠어요!";
+  }
 }
 
 // ── 차트 인스턴스 안전 생성 헬퍼 (중복 생성 방지) ──
@@ -253,6 +307,21 @@ document.addEventListener('click', e => {
   if (smodeTab) {
     document.querySelectorAll('.smode').forEach(b => b.classList.remove('active'));
     smodeTab.classList.add('active');
+    
+    // 모드에 따라 뷰파인더 배경 이미지 및 안내 텍스트 변경
+    const mode = smodeTab.getAttribute('data-mode');
+    const vfBg = document.querySelector('.vf-bg');
+    const vfHint = document.querySelector('.vf-hint');
+    if (mode === 'ocr') {
+      vfBg.style.background = "url('assets/ocr_sample.png') center/cover";
+      vfHint.textContent = "영양성분표가 잘 보이게 찍어주세요";
+    } else if (mode === 'barcode') {
+      vfBg.style.background = "url('assets/barcode_sample.png') center/cover";
+      vfHint.textContent = "바코드를 네모 안에 맞춰주세요";
+    } else {
+      vfBg.style.background = "url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=700&q=80') center/cover";
+      vfHint.textContent = "음식을 이 안에 맞춰주세요";
+    }
   }
 
   // 4. 스캐너 플래시 토글
