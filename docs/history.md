@@ -1,3 +1,18 @@
+## [2026-05-21 15:33] 🎯 스캔 카메라 뷰 및 로딩(분석) 애니메이션 화면 전체 연동
+### 💬 진행 및 결정 사항 (Discussion)
+- 사용자의 피드백("스캔 애니메이션이 시작했습니다 하고 멈추었는데?")을 반영하여, 이전까지 누락되었던 설계서의 10장(Advanced Camera Scan UI)과 11장(Nutritional Analysis Result - Loading State) 사양을 즉각 HTML/CSS 상에 구현함.
+- `index.html` 내에 각 진행 상태(대시보드 -> 스캔 카메라 뷰 -> 스캔 로딩 뷰)에 대응하는 `<section>`을 추가하고, CSS `opacity` 및 `transform` 트랜지션을 이용해 화면이 전환되는 Fluid Motion을 구성함.
+- **애니메이션 추가 사항**:
+  - 뷰파인더 렌즈 구멍 및 네온 초록 레이저 바 왕복 애니메이션(`@keyframes laserScan`) 추가.
+  - 셔터 클릭 시 번쩍이는 화이트 플래시(Flash) 모션 및 투명도 트랜지션 추가.
+  - 스캔 후 영양소 분석을 대기하는 상태를 나타내는 회전하는 궤도(Orbital) 입자 애니메이션 및 텍스트 펄스 효과 추가.
+- 코드를 GitHub 원격 저장소(`main` 브랜치)로 즉각 푸시(Push)하여 Vercel에 자동 배포(Trigger)되도록 조치함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Changed**: `index.html` (카메라 뷰파인더 영역 및 분석 로딩 영역 마크업 추가)
+- **Changed**: `styles.css` (레이저 스캔 애니메이션, 궤도 회전 입자 등 신규 화면 스타일 추가)
+- **Changed**: `script.js` (버튼 이벤트 시 각 화면 `section`을 페이드 인/아웃 시켜주는 컨트롤러 로직 추가)
+
 ## [2026-05-21 15:28] 🎯 제공된 GitHub 저장소에 코드 업로드(Push) 완료
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자가 직접 빈 저장소(`https://github.com/donguk77/NutriScan-UI-Web`)를 생성해 준 것에 따라, 로컬에서 대기 중이던 코드를 해당 원격 저장소로 연결(`remote add origin`)하고 `main` 브랜치에 Push 작업을 성공적으로 완료함.
