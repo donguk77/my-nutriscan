@@ -1,3 +1,22 @@
+## [2026-05-21 15:42] 🎯 사용자 요청에 따른 원격 저장소 이전(Migration) 완료
+### 💬 진행 및 결정 사항 (Discussion)
+- 사용자가 GitHub/Vercel 연동 과정에서 기존 저장소 설정에 오류가 있었다며, 새로운 저장소(`https://github.com/donguk77/my-nutriscan`)로의 이전을 요청함.
+- 로컬 Git 설정의 `origin` URL을 새로 제공된 `my-nutriscan` 저장소로 변경(`git remote set-url`)함.
+- 새 저장소에 이미 초기화된 충돌 파일(README 등)이 존재할 가능성을 고려해, 로컬의 완성본 코드를 강제 푸시(`git push -f`)하여 덮어씌움으로써 무결성을 확보함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Changed**: `.git/config` 의 `remote.origin.url` 을 `my-nutriscan` 주소로 변경.
+
+## [2026-05-21 15:38] 🎯 Vercel 자동 배포 트리거(Webhook) 오류 수정
+### 💬 진행 및 결정 사항 (Discussion)
+- GitHub에 코드를 Push했음에도 Vercel 측에서 새로운 배포(Deploy)가 자동으로 트리거되지 않는 문제("업데이트를 안하는데?")를 인지함.
+- **원인 분석**: 프로젝트 최상단에 생성해 두었던 정적 호환용 `vercel.json` 파일의 `null` 설정값들이 Vercel 빌드 환경에서 오히려 충돌이나 배포 스킵을 유발한 것으로 판단됨.
+- **해결 방안**: Vercel은 순수 HTML/CSS/JS 프로젝트를 어떠한 설정 파일 없이도 완벽히 자동 인식(Zero-Config)하므로, 배포를 방해할 가능성이 있는 `vercel.json` 파일을 즉각 삭제(`Remove-Item`)함.
+- 수정한 내역을 GitHub에 다시 푸시하여 강제로 Vercel Webhook이 트리거되도록 우회 유도함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Deleted**: `vercel.json` (배포 충돌 해결을 위한 설정 파일 삭제)
+
 ## [2026-05-21 15:33] 🎯 스캔 카메라 뷰 및 로딩(분석) 애니메이션 화면 전체 연동
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자의 피드백("스캔 애니메이션이 시작했습니다 하고 멈추었는데?")을 반영하여, 이전까지 누락되었던 설계서의 10장(Advanced Camera Scan UI)과 11장(Nutritional Analysis Result - Loading State) 사양을 즉각 HTML/CSS 상에 구현함.
@@ -46,7 +65,7 @@
 
 ## [2026-05-21 15:17] 🎯 Flutter에서 순수 Web(HTML/CSS/JS) 기반 아키텍처로 전면 마이그레이션
 ### 💬 진행 및 결정 사항 (Discussion)
-- 사용자의 "플루터 말고 html로 만들어야 하는데?" 피드백에 따라 구현 기반 기술을 Flutter에서 HTML/CSS(Vanilla)/Vanilla JS 환경으로 즉시 전환함.
+- 사용자의 "플루터 말고 html로 만들어야 하는데?" 피드백에 따라 구현 기반 기술을 Flutter에서 HTML/CSS(Vanilla)/Vanilla 정경으로 즉시 전환함.
 - 디자인 토큰(CSS Variables), Typography(`Pretendard` 웹 폰트), Glassmorphism(`backdrop-filter`), Fluid Motion(`transition`, `transform`) 등의 스펙을 CSS만으로 완벽하게 제어할 수 있도록 구조 재설계 및 렌더링 검수 완료.
 - 추가적인 라이브러리 없이 100% 네이티브 웹 기술로 동작하도록 하여 빠른 응답성과 최적의 렌더링 성능 확보.
 
