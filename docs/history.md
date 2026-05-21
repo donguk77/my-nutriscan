@@ -1,3 +1,11 @@
+## [2026-05-21 15:28] 🎯 제공된 GitHub 저장소에 코드 업로드(Push) 완료
+### 💬 진행 및 결정 사항 (Discussion)
+- 사용자가 직접 빈 저장소(`https://github.com/donguk77/NutriScan-UI-Web`)를 생성해 준 것에 따라, 로컬에서 대기 중이던 코드를 해당 원격 저장소로 연결(`remote add origin`)하고 `main` 브랜치에 Push 작업을 성공적으로 완료함.
+- **최종 Vercel 연동**: 코드가 GitHub에 완전히 넘어갔으므로, 사용자가 Vercel 대시보드에서 1-Click으로 Import할 수 있도록 다이렉트 연동 가이드를 제시함.
+
+### 🛠️ 코드 수정 내역 (Code Changes)
+- **Changed**: `.git/config` 에 원격 저장소(`origin`) URL 추가 및 `push` 완료.
+
 ## [2026-05-21 15:24] 🎯 자동 배포 우회 시도 및 한계 보고
 ### 💬 진행 및 결정 사항 (Discussion)
 - 사용자의 요청에 따라 GitHub MCP 서버(`github-mcp-server`)를 활용해 `NutriScan-UI-Web` 원격 저장소 자동 생성을 시도함.

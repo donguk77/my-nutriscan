@@ -4,35 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NutriScan UI Remaster</title>
-  
-  <!-- Pretendard 폰트 로드 -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   
-  <div class="dashboard-container">
-    <header class="dashboard-header">
-      <h1 class="headline-large">NutriScan UI Master</h1>
-      <p class="subtitle primary-text">Design Spec 100% Loaded (Web Version).</p>
-    </header>
-
-    <main class="dashboard-content">
-      <!-- Premium Glass Card 컴포넌트 -->
-      <div class="premium-glass-card">
-        <h2 class="title-large">글래스모피즘 테스트</h2>
-        <p class="body-medium">반투명 표면 및 깊이감 렌더링 검수 중</p>
+  <div class="app-container">
+    
+    <!-- 1. Home Dashboard 화면 -->
+    <section id="dashboardSection" class="screen-section active">
+      <div class="dashboard-header">
+        <h1 class="headline-large">NutriScan UI Master</h1>
+        <p class="subtitle primary-text">Design Spec 100% Loaded (Web Version).</p>
       </div>
 
-      <!-- Bouncing Gradient Button 컴포넌트 -->
-      <button class="bouncing-gradient-button" id="scanButton">
-        <span class="button-text">스캔 시작하기</span>
-      </button>
-    </main>
-    
-    <!-- 스낵바 (Toast) 메시지 -->
-    <div id="snackbar">버튼 클릭 애니메이션이 재생되었습니다.</div>
+      <div class="dashboard-content">
+        <!-- Premium Glass Card 컴포넌트 -->
+        <div class="premium-glass-card">
+          <h2 class="title-large">글래스모피즘 테스트</h2>
+          <p class="body-medium">반투명 표면 및 깊이감 렌더링 검수 중</p>
+        </div>
+
+        <!-- Bouncing Gradient Button 컴포넌트 -->
+        <button class="bouncing-gradient-button" id="scanButton">
+          <span class="button-text">스캔 시작하기</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. Advanced Camera Scan UI 화면 (설계서 10장) -->
+    <section id="scanSection" class="screen-section camera-viewfinder">
+      <!-- 어두운 오버레이 -->
+      <div class="dimmer-overlay"></div>
+      
+      <!-- 정중앙 뚫린 스캔 렌즈 영역 -->
+      <div class="scan-hole">
+        <!-- 네 모서리 브라켓 -->
+        <div class="bracket top-left"></div>
+        <div class="bracket top-right"></div>
+        <div class="bracket bottom-left"></div>
+        <div class="bracket bottom-right"></div>
+        
+        <!-- 레이저 스캔 애니메이션 -->
+        <div class="laser-bar"></div>
+      </div>
+      
+      <!-- 하단 셔터 액션 영역 -->
+      <div class="bottom-action-sheet">
+        <div class="shutter-ring">
+          <button class="shutter-button" id="shutterButton"></button>
+        </div>
+        <p class="body-medium mt-4" style="color: white;">음식을 사각형 안에 맞추고 촬영하세요</p>
+      </div>
+    </section>
+
+    <!-- 3. Nutritional Analysis Result (Loading State) 화면 (설계서 11장) -->
+    <section id="loadingSection" class="screen-section">
+      <div class="loading-container">
+        <!-- 빙글빙글 도는 궤도 입자 -->
+        <div class="orbital-wrapper">
+          <div class="premium-glass-card image-placeholder">
+            <span style="font-size: 3rem;">🥗</span>
+          </div>
+          <div class="orbital-particle"></div>
+          <div class="orbital-particle delay"></div>
+        </div>
+        
+        <!-- 투명도 깜빡임 텍스트 -->
+        <p class="pulsing-text title-medium primary-text mt-8">AI가 음식의 영양소를 스캔 중입니다...</p>
+      </div>
+    </section>
+
   </div>
 
   <script src="script.js"></script>
