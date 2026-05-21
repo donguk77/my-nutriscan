@@ -213,3 +213,66 @@ function initCharts() {
     }
   });
 }
+
+// ── UI 상호작용 및 버튼 연결 (전역 이벤트 위임) ──
+document.addEventListener('click', e => {
+  // 1. 다이어리 식단 삭제 버튼
+  if (e.target.closest('.del-btn')) {
+    const tr = e.target.closest('tr');
+    if (tr) {
+      tr.style.transition = 'opacity 0.2s';
+      tr.style.opacity = '0';
+      setTimeout(() => tr.remove(), 200);
+    }
+  }
+
+  // 2. 다이어리 날짜 변경 버튼
+  const dateBtn = e.target.closest('.date-nav .icon-btn');
+  if (dateBtn) {
+    const label = document.querySelector('.date-label');
+    if (label) {
+      if (dateBtn.textContent.includes('‹')) label.textContent = '어제';
+      else if (dateBtn.textContent.includes('›')) label.textContent = '내일';
+    }
+  }
+
+  // 3. 탭 버튼 전환 (음식 검색, 통계 기간, 스캐너 모드)
+  const searchTab = e.target.closest('.search-tab');
+  if (searchTab) {
+    document.querySelectorAll('.search-tab').forEach(b => b.classList.remove('active'));
+    searchTab.classList.add('active');
+  }
+  
+  const periodTab = e.target.closest('.period-tab');
+  if (periodTab) {
+    document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+    periodTab.classList.add('active');
+  }
+
+  const smodeTab = e.target.closest('.smode');
+  if (smodeTab) {
+    document.querySelectorAll('.smode').forEach(b => b.classList.remove('active'));
+    smodeTab.classList.add('active');
+  }
+
+  // 4. 스캐너 플래시 토글
+  const flashBtn = e.target.closest('.scanner-flash');
+  if (flashBtn) {
+    flashBtn.style.color = flashBtn.style.color === 'yellow' ? '#fff' : 'yellow';
+  }
+
+  // 5. 스캔 결과 페이지 수량 증감 버튼 (+ / -)
+  const qtyBtn = e.target.closest('.qty-ctrl button');
+  if (qtyBtn) {
+    const span = qtyBtn.parentElement.querySelector('span');
+    if (span) {
+      const match = span.textContent.match(/([\d.]+)인분/);
+      let qty = match ? parseFloat(match[1]) : 1;
+      
+      if (qtyBtn.textContent === '+') qty += 0.5;
+      if (qtyBtn.textContent === '-' && qty > 0.5) qty -= 0.5;
+      
+      span.textContent = `${qty}인분 (${Math.round(qty * 320)}g)`;
+    }
+  }
+});
